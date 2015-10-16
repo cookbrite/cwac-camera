@@ -198,7 +198,7 @@ various builder-style setters for configuration, and call `build()` to get your
 customized `SimpleCameraHost` instance.
 
 You can pass your customized instance of `CameraHost`
-to `setHost()` on your `CameraFragment`, to replace the default.
+to `setCameraHost()` on your `CameraFragment`, to replace the default.
 **Do this in `onCreate()` of a `CameraFragment` subclass** (or, if practical,
 just after instantiating your fragment) to ensure that the
 right `CameraHost` is used everywhere.
@@ -741,9 +741,9 @@ directly. To do this:
 your `Activity` as a parameter. At the present time, `CameraView` does not
 support being placed in a layout resource.
 
-- Call `setHost()` on the `CameraView` as early as possible, to make sure
+- Call `setCameraHost()` on the `CameraView` as early as possible, to make sure
 that the `CameraView` is working with the right `CameraHost` implementation.
-Alternatively, override `getHost()` and return the right `CameraHost`
+Alternatively, override `getCameraHost()` and return the right `CameraHost`
 there.
 
 - Forward the `onResume()` and `onPause()` lifecycle events from your
@@ -758,7 +758,7 @@ If you want to use `CameraView` in a layout resource, you can, but your
 activity will need to implement the `CameraHostProvider` interface. This has
 one required method: `getCameraHost()`, which returns the `CameraHost` instance
 to be used with the `CameraView`. You would implement this in lieu of calling
-`setHost()` yourself.
+`setCameraHost()` yourself.
 
 If you want to take advantage of this and use your own layout in a `CameraFragment`
 subclass, simply override `onCreateView()` and do what you want. The only
@@ -813,6 +813,15 @@ Upgrading
 ---------
 If you are moving from an older to a newer edition of CWAC-Camera, here are some
 upgrade notes which may help.
+
+### From Anything to 0.7.0
+
+API Level 23 added a `getHost()` method to `Fragment`, which collided
+with this library's use of `getHost()`. Version 0.7.0 of the library
+renames `getHost()` to `getCameraHost()` and `setHost()` to
+`setCameraHost()` to avoid the collision. Places where you are
+overriding `getHost()` or calling `setHost()` will need to be changed
+to the new method names to address this.
 
 ### From 0.5.x to 0.6.0 and Higher
 
@@ -937,7 +946,10 @@ if you are using the `.acl` flavor of `CameraFragment`.
 
 Version
 -------
-This is version v0.6.12 of this module, meaning it is coming along nicely.
+This is version v0.7.0 of this module, and it is discontinued outside
+of changes dictated by changes to Android itself (e.g., 0.7.0
+renaming `getHost()` to `getCameraHost()` to avoid an API Level 23
+change to `Fragment`).
 
 Demo
 ----
@@ -976,6 +988,7 @@ the fence may work, but it may not.
 
 Release Notes
 -------------
+- v0.7.0: changed `getHost()` to `getCameraHost()`, `setHost()` to `setCameraHost()`
 - v0.6.12: updated for Android Studio 1.0 and new AAR publishing system
 - v0.6.11: this release intentionally left blank
 - v0.6.10: addressed memory leaks and crashes due to inconsistent pause handling
