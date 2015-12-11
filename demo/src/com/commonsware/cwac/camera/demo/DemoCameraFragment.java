@@ -73,7 +73,7 @@ public class DemoCameraFragment extends CameraFragment implements
     SimpleCameraHost.Builder builder=
         new SimpleCameraHost.Builder(new DemoCameraHost(getActivity()));
 
-    setHost(builder.useFullBleedPreview(true).build());
+    setCameraHost(builder.useFullBleedPreview(true).build());
   }
 
   @Override
@@ -233,7 +233,8 @@ public class DemoCameraFragment extends CameraFragment implements
       takePictureItem.setEnabled(false);
     }
 
-    PictureTransaction xact=new PictureTransaction(getHost());
+    PictureTransaction xact=new PictureTransaction(
+      getCameraHost());
 
     if (flashItem!=null && flashItem.isChecked()) {
       xact.flashMode(flashMode);

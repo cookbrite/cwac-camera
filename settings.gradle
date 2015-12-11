@@ -1,1 +1,1 @@
-include ':camera', ':camera-v9', ':demo', ':demo-v9'
+include ':camera', ':camera-v9', ':demo', ':demo-v9', ':demo-layout'

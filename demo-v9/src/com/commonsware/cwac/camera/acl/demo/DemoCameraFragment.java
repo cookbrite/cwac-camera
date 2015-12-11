@@ -51,7 +51,7 @@ public class DemoCameraFragment extends CameraFragment {
     super.onCreate(state);
 
     setHasOptionsMenu(true);
-    setHost(new DemoCameraHost(getActivity()));
+    setCameraHost(new DemoCameraHost(getActivity()));
   }
 
   @Override

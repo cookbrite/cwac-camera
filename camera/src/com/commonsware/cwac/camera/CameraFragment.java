@@ -48,7 +48,7 @@ public class CameraFragment extends Fragment {
                            ViewGroup container,
                            Bundle savedInstanceState) {
     cameraView=new CameraView(getActivity());
-    cameraView.setHost(getHost());
+    cameraView.setHost(getCameraHost());
 
     return(cameraView);
   }
@@ -108,7 +108,7 @@ public class CameraFragment extends Fragment {
    *         this fragment, where the default is an instance
    *         of the stock SimpleCameraHost.
    */
-  public CameraHost getHost() {
+  public CameraHost getCameraHost() {
     if (host == null) {
       host=new SimpleCameraHost(getActivity());
     }
@@ -117,7 +117,7 @@ public class CameraFragment extends Fragment {
   }
 
   /**
-   * Call this (or override getHost()) to supply the
+   * Call this (or override getCameraHost()) to supply the
    * CameraHost used for most of the detailed interaction
    * with the camera.
    * 
@@ -125,7 +125,7 @@ public class CameraFragment extends Fragment {
    *          a CameraHost instance, such as a subclass of
    *          SimpleCameraHost
    */
-  public void setHost(CameraHost host) {
+  public void setCameraHost(CameraHost host) {
     this.host=host;
   }
 
