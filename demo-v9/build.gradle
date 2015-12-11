@@ -1,28 +1,21 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.1'
-    }
-}
-
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 repositories {
     mavenCentral();
 
     maven {
-        url "https://repo.commonsware.com.s3.amazonaws.com"
+        url "https://s3.amazonaws.com/repo.commonsware.com"
     }
 }
 
 dependencies {
-    compile('com.commonsware.cwac:camera-v9:0.6.+') {
+    debugCompile project(':camera-v9')
+
+    releaseCompile('com.commonsware.cwac:camera-v9:0.7.+') {
       exclude module: 'support-v4'
     }
 
-    compile 'com.android.support:support-v4:18.0.+'
+    releaseCompile 'com.android.support:support-v4:18.0.+'
 }
 
 android {

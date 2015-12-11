@@ -42,6 +42,7 @@ public class DisplayActivity extends Activity {
       opts.inMutable=false;
       opts.inSampleSize=2;
 
+      iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
       iv.setImageBitmap(BitmapFactory.decodeByteArray(imageToShow,
                                                       0,
                                                       imageToShow.length,

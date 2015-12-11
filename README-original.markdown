@@ -1,6 +1,11 @@
 CWAC-Camera: Taking Pictures. Made (Somewhat) Sensible.
 =======================================================
 
+**NOTE**: This library [is slated to be rewritten from scratch](http://commonsware.com/blog/2014/12/01/my-mistakes-cwac-camera.html).
+Please bear that in mind when working with the library.
+
+----
+
 Taking pictures or videos using a third-party app is fairly straightforward,
 using `ACTION_IMAGE_CAPTURE` or `ACTION_VIDEO_CAPTURE`. However, you as the
 developer have little control over what happens with the image or video,
@@ -43,7 +48,7 @@ To integrate the core AAR, the Gradle recipe is:
 ```groovy
 repositories {
     maven {
-        url "https://repo.commonsware.com.s3.amazonaws.com"
+        url "https://s3.amazonaws.com/repo.commonsware.com"
     }
 }
 
@@ -60,7 +65,7 @@ repositories {
     mavenCentral();
 
     maven {
-        url "https://repo.commonsware.com.s3.amazonaws.com"
+        url "https://s3.amazonaws.com/repo.commonsware.com"
     }
 }
 
@@ -134,7 +139,7 @@ that `takePicture()` can throw an `IllegalStateException` if you
 call it before the preview is ready or if you call it while auto-focus
 is occurring.
 
-Step #3b: Call `startRecording()` and `stopRecording()` on the
+Step #3b: Call `record()` and `stopRecording()` on the
 `CameraFragment` to record a video. **NOTE** that this is presently
 only available on `com.commonsware.cwac.camera.CameraFragment`
 for use with native API Level 11+ fragments. The resulting video
@@ -145,7 +150,7 @@ will be stored in the default videos directory (e.g., `Movies`) on external stor
 Step #4: Add appropriate `<uses-permission>` elements to your manifest.
 For what is described in the preceding steps, you would need the `CAMERA`,
 `RECORD_AUDIO`, and `WRITE_EXTERNAL_STORAGE` permissions. `RECORD_AUDIO`
-is for the video recording using `startRecording()`; if you are only taking
+is for the video recording using `record()`; if you are only taking
 still photos, you will not need that permission.
 
 And that's it.
@@ -193,7 +198,7 @@ various builder-style setters for configuration, and call `build()` to get your
 customized `SimpleCameraHost` instance.
 
 You can pass your customized instance of `CameraHost`
-to `setHost()` on your `CameraFragment`, to replace the default.
+to `setCameraHost()` on your `CameraFragment`, to replace the default.
 **Do this in `onCreate()` of a `CameraFragment` subclass** (or, if practical,
 just after instantiating your fragment) to ensure that the
 right `CameraHost` is used everywhere.
@@ -218,7 +223,7 @@ retrieve that object later via the zero-argument `tag()` method.
 There are a series of methods that you can override on `SimpleCameraHost`
 to control where photos and videos
 are stored once taken. These methods will be called for each `takePicture()`
-or `startRecording()` call, so you can create customized results for each
+or `record()` call, so you can create customized results for each
 distinct photo or video.
 
 Specifically:
@@ -561,7 +566,7 @@ the revised `Camera.Parameters`, where the stock implementation in
 
 ### Arbitrary Video Configuration
 
-Shortly after you call `startRecording()`, your `CameraHost` will be called
+Shortly after you call `record()`, your `CameraHost` will be called
 with:
 
 - `configureRecorderAudio()`
@@ -682,8 +687,8 @@ replacing the system default.
 
 The stock `DeviceProfile` is largely driven by XML resources. These
 resources' names are of the form `cwac_camera_profile_XXX_YYY`,
-where `XXX` is the `Build.MANUFACTURER` and `YYY` is the `Build.MODEL`.
-Both `Build.MANUFACTURER` and `BUILD.MODEL` are converted to lowercase
+where `XXX` is the `Build.MANUFACTURER` and `YYY` is the `Build.PRODUCT`.
+Both `Build.MANUFACTURER` and `BUILD.PRODUCT` are converted to lowercase
 and have non-alphanumeric values converted to underscores, to ensure
 that we wind up with a valid resource filename. Each of those
 XML resource files has a `<deviceProfile>` root element, containing
@@ -736,9 +741,9 @@ directly. To do this:
 your `Activity` as a parameter. At the present time, `CameraView` does not
 support being placed in a layout resource.
 
-- Call `setHost()` on the `CameraView` as early as possible, to make sure
+- Call `setCameraHost()` on the `CameraView` as early as possible, to make sure
 that the `CameraView` is working with the right `CameraHost` implementation.
-Alternatively, override `getHost()` and return the right `CameraHost`
+Alternatively, override `getCameraHost()` and return the right `CameraHost`
 there.
 
 - Forward the `onResume()` and `onPause()` lifecycle events from your
@@ -753,7 +758,7 @@ If you want to use `CameraView` in a layout resource, you can, but your
 activity will need to implement the `CameraHostProvider` interface. This has
 one required method: `getCameraHost()`, which returns the `CameraHost` instance
 to be used with the `CameraView`. You would implement this in lieu of calling
-`setHost()` yourself.
+`setCameraHost()` yourself.
 
 If you want to take advantage of this and use your own layout in a `CameraFragment`
 subclass, simply override `onCreateView()` and do what you want. The only
@@ -808,6 +813,15 @@ Upgrading
 ---------
 If you are moving from an older to a newer edition of CWAC-Camera, here are some
 upgrade notes which may help.
+
+### From Anything to 0.7.0
+
+API Level 23 added a `getHost()` method to `Fragment`, which collided
+with this library's use of `getHost()`. Version 0.7.0 of the library
+renames `getHost()` to `getCameraHost()` and `setHost()` to
+`setCameraHost()` to avoid the collision. Places where you are
+overriding `getHost()` or calling `setHost()` will need to be changed
+to the new method names to address this.
 
 ### From 0.5.x to 0.6.0 and Higher
 
@@ -932,7 +946,10 @@ if you are using the `.acl` flavor of `CameraFragment`.
 
 Version
 -------
-This is version v0.6.9 of this module, meaning it is coming along nicely.
+This is version v0.7.0 of this module, and it is discontinued outside
+of changes dictated by changes to Android itself (e.g., 0.7.0
+renaming `getHost()` to `getCameraHost()` to avoid an API Level 23
+change to `Fragment`).
 
 Demo
 ----
@@ -951,26 +968,13 @@ file.
 
 Questions
 ---------
-If you have questions regarding the use of this code, please post a question
-on [StackOverflow](http://stackoverflow.com/questions/ask) tagged with
-`commonsware-cwac` and `android` after [searching to see if there already is an answer](https://stackoverflow.com/search?q=[commonsware-cwac]+camera). Be sure to indicate
-what CWAC module you are having issues with, and be sure to include source code 
-and stack traces if you are encountering crashes.
-
-If you have encountered what is clearly a bug, or if you have a feature request,
-please post an [issue](https://github.com/commonsguy/cwac-camera/issues).
-**Be certain to include complete steps for reproducing the issue.**
-
-Do not ask for help via Twitter.
-
-Also, if you plan on hacking
-on the code with an eye for contributing something back,
-please open an issue that we can use for discussing
-implementation details. Just lobbing a pull request over
-the fence may work, but it may not.
+This library is no longer supported.
 
 Release Notes
 -------------
+- v0.7.0: changed `getHost()` to `getCameraHost()`, `setHost()` to `setCameraHost()`
+- v0.6.12: updated for Android Studio 1.0 and new AAR publishing system
+- v0.6.11: this release intentionally left blank
 - v0.6.10: addressed memory leaks and crashes due to inconsistent pause handling
 - v0.6.9: updated Gradle, fixed `-v9` manifest for merging, "fixed" issue #176
 - v0.6.8: yet more bug fixes, added `cwac-` prefix to JAR

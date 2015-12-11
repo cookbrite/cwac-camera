@@ -101,10 +101,10 @@ public class CameraView extends ViewGroup implements AutoFocusCallback {
     addView(previewStrategy.getWidget());
 
     if (camera == null) {
-      cameraId=getHost().getCameraId();
+      try {
+        cameraId=getHost().getCameraId();
 
-      if (cameraId >= 0) {
-        try {
+        if (cameraId >= 0) {
           camera=Camera.open(cameraId);
 
           if (getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
@@ -118,12 +118,12 @@ public class CameraView extends ViewGroup implements AutoFocusCallback {
             camera.setFaceDetectionListener((Camera.FaceDetectionListener)getHost());
           }
         }
-        catch (Exception e) {
-          getHost().onCameraFail(FailureReason.UNKNOWN);
+        else {
+          getHost().onCameraFail(FailureReason.NO_CAMERAS_REPORTED);
         }
       }
-      else {
-        getHost().onCameraFail(FailureReason.NO_CAMERAS_REPORTED);
+      catch (Exception e) {
+        getHost().onCameraFail(FailureReason.UNKNOWN);
       }
     }
   }
@@ -479,6 +479,7 @@ public class CameraView extends ViewGroup implements AutoFocusCallback {
     }
   }
 
+  @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
   public void stopFaceDetection() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH
         && camera != null && isDetectingFaces) {

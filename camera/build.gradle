@@ -1,27 +1,8 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.1'
-        classpath 'com.github.dcendents:android-maven-plugin:1.0'
-    }
-}
-
 apply plugin: 'com.android.library'
 
-version '0.6.10'
-group 'com.commonsware.cwac'
-
-repositories {
-}
-
-dependencies {
-}
-
 android {
-    compileSdkVersion 17
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
 
     sourceSets {
         main {
@@ -39,15 +20,31 @@ android {
     }
 }
 
-// from http://stackoverflow.com/a/19484146/115145
+if (project.hasProperty('PUBLISH_GROUP_ID')) {
+    // from http://stackoverflow.com/a/19484146/115145
 
-android.libraryVariants.all { variant ->
-  def name = variant.buildType.name
-  if (name.equals(com.android.builder.core.BuilderConstants.DEBUG)) {
-    return; // Skip debug builds.
-  }
-  def task = project.tasks.create "jar${name.capitalize()}", Jar
-  task.dependsOn variant.javaCompile
-  task.from variant.javaCompile.destinationDir
-	task.archiveName = "cwac-${task.archiveName}"
+    android.libraryVariants.all { variant ->
+        def name = variant.buildType.name
+        if (name.equals(com.android.builder.core.BuilderConstants.DEBUG)) {
+            return; // Skip debug builds.
+        }
+        def task = project.tasks.create "jar${name.capitalize()}", Jar
+        task.dependsOn variant.javaCompile
+        task.from variant.javaCompile.destinationDir
+        task.baseName = "cwac-${PUBLISH_ARTIFACT_ID}"
+        task.version = PUBLISH_VERSION
+        task.exclude('com/commonsware/cwac/**/BuildConfig.**')
+    }
+
+    apply plugin: 'maven'
+
+    uploadArchives {
+        repositories.mavenDeployer {
+            pom.groupId = PUBLISH_GROUP_ID
+            pom.artifactId = PUBLISH_ARTIFACT_ID
+            pom.version = PUBLISH_VERSION
+
+            repository(url: LOCAL_REPO)
+        }
+    }
 }
