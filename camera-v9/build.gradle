@@ -11,7 +11,7 @@ repositories {
 dependencies {
     debugCompile project(':camera')
     releaseCompile 'com.commonsware.cwac:camera:0.6.+'
-    compile 'com.android.support:support-v4:18.0.+'
+    compile 'com.android.support:support-v4:23.0.1'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 }
 
