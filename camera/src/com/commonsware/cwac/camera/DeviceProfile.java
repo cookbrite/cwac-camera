@@ -45,7 +45,7 @@ abstract public class DeviceProfile {
 
   synchronized public static DeviceProfile getInstance(Context ctxt) {
     if (SINGLETON == null) {
-//       android.util.Log.wtf("DeviceProfile",
+//       android.com.metabrite.capture.util.Log.wtf("DeviceProfile",
 //       String.format("\"%s\" \"%s\"", Build.MANUFACTURER,
 //       Build.PRODUCT));
 
