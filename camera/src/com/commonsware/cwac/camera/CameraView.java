@@ -168,7 +168,7 @@ public class CameraView extends ViewGroup implements AutoFocusCallback {
                                                           null);
 
             // if (newSize != null) {
-            // android.com.metabrite.capture.util.Log.wtf("CameraView",
+            // android.util.Log.wtf("CameraView",
             // String.format("getPreferredPreviewSizeForVideo: %d x %d",
             // newSize.width,
             // newSize.height));
