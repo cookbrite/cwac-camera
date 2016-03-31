@@ -143,22 +143,19 @@ public class ImageCleanupTask extends Thread {
           cleaned=BitmapFactory.decodeByteArray(data, 0, data.length);
         }
 
-        // if (exif == null) {
-        Log.i("CWAC-Camera", "Compressing fixed up image to " + xact.jpegQuality + "% JPEG quality");
-        cleaned.compress(Bitmap.CompressFormat.JPEG, xact.jpegQuality, out);
-        // }
-        // else {
+        if (exif == null) {
+          Log.i("CWAC-Camera", "Compressing fixed up image to " + xact.jpegQuality + "% JPEG quality");
+          cleaned.compress(Bitmap.CompressFormat.JPEG, xact.jpegQuality, out);
+        }
+        else {
         // exif.deleteTag(ExifInterface.TAG_ORIENTATION);
-        //
-        // try {
-        // exif.writeExif(cleaned, out);
-        // }
-        // catch (IOException e) {
-        // Log.e("CWAC-Camera", "Exception writing to JPEG",
-        // e);
-        // // TODO: ripple to client
-        // }
-        // }
+          try {
+            exif.writeExif(cleaned, out);
+          } catch (IOException e) {
+            Log.e("CWAC-Camera", "Exception writing to JPEG", e);
+            // TODO: ripple to client
+          }
+        }
 
         data=out.toByteArray();
 
