@@ -722,6 +722,10 @@ public class CameraView extends ViewGroup implements AutoFocusCallback {
 
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
+      if (!inPreview) {
+        return;
+      }
+      
       camera.setParameters(previewParams);
 
       if (data != null) {
